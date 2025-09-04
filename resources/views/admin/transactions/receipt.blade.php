@@ -24,8 +24,16 @@
     <p style="text-align: center;margin-top: -10px;"><span style="font-size: 16px;font-weight: bold">Reference No</span></p>
     <p style="text-align: center;margin-top: -16px;"> <span>{{$transaction->reference_number}}</span></p>
     @if($transaction->token)
-        <p style="text-align: center;margin-top: -10px;"><span style="font-size: 16px;font-weight: bold">Token</span></p>
-        <p style="text-align: center;margin-top: -16px;"> <span>{{$transaction->token}}</span></p>
+        {{-- <p style="text-align: center;margin-top: -10px;"><span style="font-size: 16px;font-weight: bold">Token</span></p>
+        <p style="text-align: center;margin-top: -16px;"> <span>{{$transaction->token}}</span></p> --}}
+        @if ($transaction->token_p31 != null)
+        <p style="text-align: center;margin-top: -16px;font-size: 15px;">TOKEN 1: <span>{{$transaction->token}}</span></p> 
+        <p style="text-align: center;margin-top: -16px;font-size: 15px;">TOKEN 2: <span>{{$transaction->token_p31}}</span></p> 
+        <p style="text-align: center;margin-top: -16px;font-size: 15px;">TOKEN 3: <span>{{$transaction->token_p32}}</span></p> 
+        @else        
+        <p style="text-align: center;margin-top: -10px;"><span style="font-size: 14px;font-weight: bold">TOKEN</span></p>
+        <p style="text-align: center;margin-top: -16px;font-size: 20px;"> <span>{{$transaction->token}}</span></p>
+        @endif
         <p style="text-align: center;margin-top: -10px;"><span style="font-size: 16px;font-weight: bold">Units</span></p>
         <p style="text-align: center;margin-top: -16px;"> <span>{{number_format($transaction->units,2)}}</span></p>
     @endif

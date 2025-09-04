@@ -7,6 +7,7 @@ use App\Models\SysParameter;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -130,12 +131,11 @@ class EuclController extends Controller
         // return view('admin.eucl.show', compact('title'));
         // dd(Transaction::findorfail($id)->request_id);
     }
-    public function paymentCopy($id)
+    public function paymentCopy($receipt)
     {
         $title = "Payment Receipt Copy";
         $todayDate = Carbon::now()->format('YmdHim');
         $uuid = Str::orderedUuid();
-        $external_transaction_id = Transaction::findorfail($id)->external_transaction_id;
         $data = [
             "request" => ["header" => ["h0" => "Vendor-WS",
                 "h1" => "1.0.2",
@@ -152,7 +152,7 @@ class EuclController extends Controller
                 "h12" => "IPOSITA Vending System",
                 "h13" => "1.0.0",
                 "h14" => "rw"],
-                "body" => [["p0" => $external_transaction_id]]],
+                "body" => [["p0" => $receipt]]],
         ];
 
         $url = config('services.IPOSITA_EUCL_URL') . "/vendor.ws";
@@ -160,8 +160,12 @@ class EuclController extends Controller
         if ($response2->ok()) {
             $json_data = json_decode($response2);
             if ($json_data->response->body) {
-                $output = $json_data->response->body[0];
-                return view('admin.eucl.show', compact('output', 'title'));
+                $transaction = $json_data->response->body[0];
+
+                $pdf = PDF::loadView('admin.transactions.receiptFromEucl', compact('transaction'));
+                return $pdf->stream('receipt.pdf');
+
+                // return view('admin.eucl.show', compact('output', 'title'));
 
             } else {
                 return redirect()->back()->with("warning", "No Record Found");
@@ -195,7 +199,7 @@ class EuclController extends Controller
                 "h12" => "IPOSITA Vending System",
                 "h13" => "1.0.0",
                 "h14" => "rw"],
-                "body" => [["p0" => "20"]]],
+                "body" => [["p0" => "200"]]],
         ];
 
         // return response()->json($data);

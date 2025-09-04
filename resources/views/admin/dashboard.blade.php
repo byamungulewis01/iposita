@@ -169,46 +169,47 @@
             </div>
 
             <div class="row mt-10">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="card card-body rounded shadow-sm border-0 h-100">
                         <h4> Total Sales Per Month in {{now()->year}} </h4>
                         <div id="sales-per-month"></div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <!--begin::Mixed Widget 13-->
-                    <div class="card card-custom card-shadowless gutter-b h-100">
-                        <!--begin::Header-->
-                        <div class="card-header border-0">
-                            <h3 class="card-title font-weight-bolder text-dark">Service Balances</h3>
-                        </div>
-                        <!--end::Header-->
-                        <!--begin::Body-->
-                        <div class="card-body pt-2">
-                            @foreach(getBalance() ?? [] as $balance)
-                                <!--begin::Item-->
-                                <div class="d-flex align-items-center mb-10">
-                                    <!--begin::Text-->
-                                    <div class="d-flex flex-column flex-grow-1">
-                                        <a href="#" class="text-dark-75 text-hover-primary font-weight-bold font-size-lg mb-1">{{optional($balance->service)->name}}</a>
-                                        <span class="text-muted font-weight-bold">{{optional($balance->serviceProvider)->name}}</span>
-                                    </div>
-                                    <!--end::Text-->
-                                    <div>
-                                        <span class="text-dark-75 font-weight-bolder font-size-lg mb-1">{{number_format($balance->balance)}} RWF</span>
-                                    </div>
-                                </div>
-                                <!--end:Item-->
-                            @endforeach
-                        </div>
-                        <!--end::Body-->
-                    </div>
-            </div>
-            </div>
+
+                <!--end
+                   <div class="col-md-4">
+
+                       <div class="card card-custom card-shadowless gutter-b h-100">
+
+                           <div class="card-header border-0">
+                               <h3 class="card-title font-weight-bolder text-dark">Service Balances</h3>
+                           </div>
+
+                           <div class="card-body pt-2">
+                               @foreach(getBalance() ?? [] as $balance)
+
+                                   <div class="d-flex align-items-center mb-10">
+
+                                       <div class="d-flex flex-column flex-grow-1">
+                                           <a href="#" class="text-dark-75 text-hover-primary font-weight-bold font-size-lg mb-1">{{optional($balance->service)->name}}</a>
+                                           <span class="text-muted font-weight-bold">{{optional($balance->serviceProvider)->name}}</span>
+                                       </div>
+
+                                       <div>
+                                           <span class="text-dark-75 font-weight-bolder font-size-lg mb-1">{{number_format($balance->balance)}} RWF</span>
+                                       </div>
+                                   </div>
+
+                               @endforeach
+                           </div>
+
+                       </div>
+               </div>
+               </div>
 
 
-
-            <!--end::Dashboard-->
+  -->
+               <!--end::Dashboard-->
         </div>
         <!--end::Container-->
     </div>

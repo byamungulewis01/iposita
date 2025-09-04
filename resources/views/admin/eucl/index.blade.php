@@ -130,17 +130,9 @@
                                 </h3>
 
                             </div>
-                            {{-- <div class="card-toolbar">
-                                    <a href="{{ route('admin.eucl-service.index') }}"
-                                        class="btn btn-sm btn-danger float-end">Logout</a>
-
-                                </div> --}}
-                            <!--end::Dropdown-->
 
                         </div>
 
-                        <!--end::Header-->
-                        <!--begin::Form-->
                         <div class="card-body">
                             <div id="sammaryRespone">
                             </div>
@@ -151,9 +143,6 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body">
-                                    <!--begin::Alert-->
-                                    {{-- @include('partials._alerts') --}}
-                                    <!--end::Alert-->
                                     <div class="form-group row">
                                         <label class="col-xl-3 col-lg-3 col-form-label text-alert">Current
                                             Password</label>
@@ -203,6 +192,7 @@
                                     <th>Receipt number </th>
                                     <th>Total units</th>
                                     <th>Transaction time </th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -502,7 +492,7 @@
                 dataType: 'json',
                 success: function(data) {
                     data.pop();
-                    // console.log(data);
+                     console.log(data);
                     $('#kt_datatable1').DataTable({
                         data: data,
                         processing: true,
@@ -513,7 +503,7 @@
                                 data: 'p0',
                             },
                             {
-                                data: 'p9',
+                                data: '',
                             },
                             {
                                 data: 'p4',
@@ -531,6 +521,24 @@
                                 targets: 0,
                                 render: function(data, type, row, meta) {
                                     return meta.row + meta.settings._iDisplayStart + 1;
+                                }
+                            },
+                            {
+                                targets: 2,
+                                render: function(data, type, row, meta) {
+                                    return row.p9 ? row.p9 : null;
+                                }
+                            },
+                            {
+                                targets: 4,
+                                render: function(data, type, row, meta) {
+                                    return row.p12 ? row.p12 : null;
+                                }
+                            },
+                            {
+                                targets: 5,
+                                render: function(data, type, row, meta) {
+                                    return row.p14 ? row.p14 : null;
                                 }
                             },
                             {
@@ -552,7 +560,24 @@
                                     return formattedDate;
                                 }
                             },
-                        ],
+                            {
+                                targets: 7,
+                                render: function(data, type, row, meta) {
+                                    var id = row.p12;
+                                    var route ="{{ route('admin.eucl-service.paymentCopy', ['id' => ':id']) }}";
+                                    route = route.replace(':id', id);
+                                    return `<a class="btn btn-sm btn-primary" href="${route}">Copy</a>`;
+                                }
+                            },
+                        ]
+                        // ,dom: 'Bfrtip', // Add this line to define buttons
+                        // buttons: [
+                        // {
+                        // extend: 'excelHtml5',
+                        // title: 'Data export',
+                        // text: 'Export to Excel' // Define the text of the button
+                        // }
+                        // ]
                     });
                 }
 

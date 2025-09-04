@@ -28,8 +28,14 @@
     <p style="text-align: center;margin-top: -10px;"><span style="font-size: 16px;font-weight: bold">Reference No</span></p>
     <p style="text-align: center;margin-top: -16px;"> <span>{{$transaction->reference_number}}</span></p> --}}
     @if($transaction->token)
+        @if ($transaction->token_p31 != null)
+        <p style="text-align: center;margin-top: -16px;font-size: 15px;">TOKEN 1: <span>{{$transaction->token}}</span></p> 
+        <p style="text-align: center;margin-top: -16px;font-size: 15px;">TOKEN 2: <span>{{$transaction->token_p31}}</span></p> 
+        <p style="text-align: center;margin-top: -16px;font-size: 15px;">TOKEN 3: <span>{{$transaction->token_p32}}</span></p> 
+        @else        
         <p style="text-align: center;margin-top: -10px;"><span style="font-size: 14px;font-weight: bold">TOKEN</span></p>
         <p style="text-align: center;margin-top: -16px;font-size: 20px;"> <span>{{$transaction->token}}</span></p>
+        @endif
     <p style="text-align: center;margin-top: -20px">------------------------------------</p>
         <p style="font-size: 18px;">Total units <span style="float: right;">{{round($transaction->units,1)}} Kwh</span></p>
         <p style="font-size: 18px;margin-top: -16px;">Electricity <span style="float: right;"> {{number_format($transaction->electricity,3)}} RWF</span></p>

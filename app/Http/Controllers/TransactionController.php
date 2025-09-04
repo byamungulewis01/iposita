@@ -205,6 +205,7 @@ class TransactionController extends Controller
      */
     public function store(TransactionRequest $request)
     {
+        // dd('Under Maintanance');
         $request->validated();
         $serviceCharges = ServiceCharges::find($request->service_charges_id);
         if (!$serviceCharges) {
@@ -269,6 +270,27 @@ class TransactionController extends Controller
             $json_data = json_decode($response2);
             if ($json_data->response->body) {
                 $tokenn = $json_data->response->body[0]->p30;
+                if ($json_data->response->body[0]->p31) {
+                    $token_p31 = $json_data->response->body[0]->p31;
+                            // Token p31
+                            $data_p31 = str_split($token_p31, 4);
+                            $formated_token_p31 = $data_p31[0] . '-' . $data_p31[1] . '-' . $data_p31[2] . '-' . $data_p31[3] . '-' . $data_p31[4];
+                } else {
+                    // Set $token_p31 to null if p31 is not available
+                    $token_p31 = null;
+                    $formated_token_p31 = null;
+                }
+                if ($json_data->response->body[0]->p32) {
+                    $token_p32 = $json_data->response->body[0]->p32;
+                           // Token p32
+                           $data_p32 = str_split($token_p32, 4);
+                           $formated_token_p32 = $data_p32[0] . '-' . $data_p32[1] . '-' . $data_p32[2] . '-' . $data_p32[3] . '-' . $data_p32[4];
+                } else {
+                    // Set $token_p31 to null if p31 is not available
+                    $token_p32 = null;
+                    $formated_token_p32 = null;
+                }
+ 
                 $units = $json_data->response->body[0]->p25;
                 $internal_transaction_id = $uuid;
                 $external_transaction_id = $json_data->response->body[0]->p14;
@@ -281,9 +303,10 @@ class TransactionController extends Controller
                 $tva = $json_data->response->body[0]->p27;
                 $fees = $json_data->response->body[0]->p90;
                 $date_from_eucl = $json_data->response->body[0]->p12;
-
+                // Token p30
                 $dataa = str_split($tokenn, 4);
                 $formated_token = $dataa[0] . '-' . $dataa[1] . '-' . $dataa[2] . '-' . $dataa[3] . '-' . $dataa[4];
+    
 
                 $transaction = new Transaction();
                 $transaction->service_charge_id = $request->service_charges_id;
@@ -317,6 +340,8 @@ class TransactionController extends Controller
                 $transaction->user_id = $user->id;
                 $transaction->status = "Success";
                 $transaction->token = $formated_token;
+                $transaction->token_p31 = $formated_token_p31;
+                $transaction->token_p32 = $formated_token_p32;
                 $transaction->is_exclusive = $request->is_exclusive;
                 $transaction->save();
 
@@ -363,7 +388,17 @@ class TransactionController extends Controller
 
     protected function sendSms(Transaction $transaction)
     {
-        $message = "Dear " . $transaction->customer_name . ", \r\nYour Cash Power account is  " . $transaction->reference_number . " Your Voucher# :" . $transaction->token . " Amount: RWF" . number_format($transaction->amount) . " Units#: " . number_format($transaction->units, 2) . " kWh \r\nThank you for using our service.";
+        // $message = "Dear " . $transaction->customer_name . ", \r\nYour Cash Power account is  " . $transaction->reference_number;
+
+        $message = "Dear " . $transaction->customer_name;
+
+        if ($transaction->token_p31 != null) {
+            $message .= " Your Token 1# :" . $transaction->token . " Your Token 2# :" . $transaction->token_p31 ." And Token 3# :" . $transaction->token_p32;
+        } else {
+            $message .= " Your Voucher# :" . $transaction->token;
+        }
+        
+        $message .= " Amount: RWF" . number_format($transaction->amount) . " Units#: " . number_format($transaction->units, 2) . " kWh \r\nThank you for using our service.";
 
         $this->dispatch(new SendSms($transaction->customer_phone, $message));
     }
@@ -375,10 +410,7 @@ class TransactionController extends Controller
 
     public function fetchMeterFromEUCL()
     {
-//        EUCL_Login();
         $meter_number = request('meter_number');
-        // $services = request('services');
-        // $providers = request('providers');
         $todayDate = Carbon::now()->format('YmdHim');
         $po = SysParameter::where('name', '=', 'P0')->first();
         $p1 = SysParameter::where('name', '=', 'P1')->first();
@@ -404,7 +436,6 @@ class TransactionController extends Controller
         ];
 
         $url = config('services.IPOSITA_EUCL_URL') . "/vendor.ws";
-//       echo $url;
 
         $response2 = Http::withoutVerifying()->post($url, $data);
 

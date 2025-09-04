@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\SendSms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -32,11 +33,40 @@ Route::post("/receipt_copy", [App\Http\Controllers\TestController::class, 'testR
 // Route::post("/change_password", [App\Http\Controllers\TestController::class, 'change_password'])->name("test.change_password");
 
 Route::get('/test_email', function () {
-    $email ="uwizelogick2015@gmail.com";
+    $email = "uwizelogick2015@gmail.com";
 
     Mail::send('emails.test', ['email' => $email], function ($message) use ($email) {
         $message->to($email);
         $message->subject('Gmail Testing Notification');
     });
     return 'success';
+});
+Route::get('/test_sms', function () {
+    SendSms::dispatch("0785436135", "BYAMUNGU Lewis test message here");
+    dd('Test SMS');
+    $url = 'https://afrobulksms.com/api/sent/compose';
+
+    // API parameters
+    $fields = array(
+        'api_key' => '10|iCcWjf4UcUVi8vrnmZ4jtPVxS1QyOu9kst8sygMRfa6d5d8b',
+        'from_number' => 8,
+        'from_type' => 'sender_id',
+        'sender_id' => 'IPOSITA',
+        'to_numbers' => '+250785436135',
+        'body' => 'just testing',
+    );
+    // Initialize cURL session
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
+    }
+    curl_close($ch);
+    return $response;
 });
